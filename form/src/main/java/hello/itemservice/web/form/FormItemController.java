@@ -8,7 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/form/items")
@@ -16,6 +18,18 @@ import java.util.List;
 public class FormItemController {
 
     private final ItemRepository itemRepository;
+
+    // @ModelAttribute : Model을 사용하면 자동으로 담기게 해준다.
+    // 중복된 코드를 메서드에 일일이 넣지 않아도 된다.
+    @ModelAttribute("regions")
+    public Map<String, String> regions() {
+        Map<String, String> regions = new LinkedHashMap<>();
+        regions.put("SEOUL", "서울");
+        regions.put("BUSAN", "부산");
+        regions.put("JEJU", "제주");
+
+        return  regions;
+    }
 
     @GetMapping
     public String items(Model model) {
@@ -28,6 +42,7 @@ public class FormItemController {
     public String item(@PathVariable long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
+
         return "form/item";
     }
 
@@ -50,6 +65,7 @@ public class FormItemController {
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
+
         return "form/editForm";
     }
 
