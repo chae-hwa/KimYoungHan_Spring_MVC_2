@@ -5,10 +5,7 @@ import hello.itemservice.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +20,6 @@ public class ValidationItemControllerV3 {
 
     private final ItemRepository itemRepository;
     private final ItemValidator itemValidator;
-
-    // 검증기 적용
-    @InitBinder
-    public void init(WebDataBinder dataBinder) {
-        dataBinder.addValidators(itemValidator);
-    }
 
     @GetMapping
     public String items(Model model) {
@@ -50,6 +41,10 @@ public class ValidationItemControllerV3 {
         return "validation/v3/addForm";
     }
 
+    /** validatied 검증 순서
+     * 1. @ModelAttribute에서 검증 타입이 일치하면 @Validated 메세지 오류 출력(ex ? ~ ?까지 가능합니다. 등)
+     * 2. 검증 타입이 불일치하면 @Validated 메세지 오류 대신, typeMismatch FieldError 추가(ex 숫자가 아닙니다. 등)
+    * */
     @PostMapping("/add")
     public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
